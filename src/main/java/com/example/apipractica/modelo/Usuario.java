@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     @NotBlank(message = "El nombre es obligatorio")

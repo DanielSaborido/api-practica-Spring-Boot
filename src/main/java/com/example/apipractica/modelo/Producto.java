@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Entity
 public class Producto {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     @NotBlank(message = "El nombre es obligatorio")
