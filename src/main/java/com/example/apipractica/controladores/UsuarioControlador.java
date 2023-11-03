@@ -2,11 +2,9 @@ package com.example.apipractica.controladores;
 
 import com.example.apipractica.modelo.Usuario;
 import com.example.apipractica.repositorios.UsuarioRepositorio;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,5 +24,10 @@ public class UsuarioControlador {
     @GetMapping("/{id}")
     public  Usuario getUsuario(@PathVariable Long id){
         return usuarioRepositorio.findById(id).orElse(null);
+    }
+
+    @PostMapping("/")
+    public Usuario createUsuario(@Valid @RequestBody Usuario usuario){
+        return usuarioRepositorio.save(usuario);
     }
 }
