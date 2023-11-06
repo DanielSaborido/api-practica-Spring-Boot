@@ -1,7 +1,8 @@
 ###
 POST http://localhost:8080/api/usuario/
+Content-Type: application/json
 
 {
-"name":"Pepe"
+"name":"Pepe",
 "email":"laputa@gmail.com"
 }

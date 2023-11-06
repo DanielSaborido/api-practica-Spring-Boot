@@ -21,4 +21,7 @@ public class Producto {
     private String name;
     @NotBlank(message = "El precio es obligatorio")
     private BigDecimal price;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
