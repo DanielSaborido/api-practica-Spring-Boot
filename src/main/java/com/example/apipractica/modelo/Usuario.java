@@ -21,6 +21,9 @@ public class Usuario {
     private String name;
     @Email(message = "El correo es obligatorio")
     private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
     @JsonBackReference
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Producto> productos;
