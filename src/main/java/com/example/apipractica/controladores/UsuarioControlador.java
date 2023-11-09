@@ -1,13 +1,14 @@
 package com.example.apipractica.controladores;
 
+import com.example.apipractica.dto.UsuarioDTO;
 import com.example.apipractica.error.UsuarioNotFoundException;
 import com.example.apipractica.modelo.Usuario;
 import com.example.apipractica.repositorios.UsuarioRepositorio;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost")
@@ -21,8 +22,10 @@ public class UsuarioControlador {
     }
 
     @GetMapping
-    public List<Usuario> getUsuarios(){
-        return usuarioRepositorio.findAll();
+    public List<UsuarioDTO> getUsuarios(){
+        List<UsuarioDTO> resultado = new ArrayList<>();
+        for (Usuario usuario: usuarioRepositorio.findAll()) resultado.add(new UsuarioDTO(usuario));
+        return resultado;
     }
 
     @GetMapping("/{id}")

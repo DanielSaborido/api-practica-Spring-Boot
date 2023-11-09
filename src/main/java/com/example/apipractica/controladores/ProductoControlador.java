@@ -55,6 +55,6 @@ public class ProductoControlador {
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id:" + id));
     }
 
-    @PostMapping("/{id}/")
+    //@PostMapping("/{id}/")
     
 }
