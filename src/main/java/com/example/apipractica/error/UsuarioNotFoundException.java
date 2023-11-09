@@ -1,6 +1,5 @@
 package com.example.apipractica.error;
 
-import com.example.apipractica.modelo.Usuario;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

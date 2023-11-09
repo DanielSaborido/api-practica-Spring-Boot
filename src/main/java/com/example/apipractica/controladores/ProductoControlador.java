@@ -1,12 +1,17 @@
 package com.example.apipractica.controladores;
 
+import com.example.apipractica.dto.ProductoDTO;
+import com.example.apipractica.error.ProductoExistenteException;
+import com.example.apipractica.error.ProductoNotFoundException;
 import com.example.apipractica.modelo.Producto;
+import com.example.apipractica.modelo.Usuario;
 import com.example.apipractica.repositorios.ProductoRepositorio;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost")
@@ -20,8 +25,10 @@ public class ProductoControlador {
     }
 
     @GetMapping
-    public List<Producto> getProductos(){
-        return productoRepositorio.findAll();
+    public List<ProductoDTO> getProductos(){
+        List<ProductoDTO> resultado = new ArrayList<>();
+        for (Producto producto: productoRepositorio.findAll()) resultado.add(new ProductoDTO(producto));
+        return resultado;
     }
 
     @GetMapping("/{id}")
@@ -29,9 +36,17 @@ public class ProductoControlador {
         return productoRepositorio.findById(id).orElse(null);
     }
 
+    /*¿Sería deseable tener  un producto repetido? Si es así, ¿como lo solucionarías?
+    * No es deseable tener prodctos repetidos ya que despues darian conflicto de precios y confusiones de ID
+    * para solucionarlo se debería poner la marca a la que pertenece el producto o algo que lo vuelva característico.*/
     @PostMapping("/")
-    public Producto createProducto(@Valid @RequestBody Producto producto){
-        return productoRepositorio.save(producto);
+    public ResponseEntity<Producto> createProducto(@Valid @RequestBody Producto producto){
+        if (productoRepositorio.existsByName(producto.getName())) {
+            throw new ProductoExistenteException();
+        }
+
+        Producto nuevoProducto = productoRepositorio.save(producto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProducto);
     }
 
     @PutMapping("/{id}")
@@ -42,7 +57,7 @@ public class ProductoControlador {
                     existingProducto.setPrice(producto.getPrice());
                     return productoRepositorio.save(existingProducto);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id:" + id));
+                .orElseThrow(() -> new ProductoNotFoundException(id));
     }
 
     @DeleteMapping("/{id}")
@@ -52,9 +67,13 @@ public class ProductoControlador {
                     productoRepositorio.delete(existingProducto);
                     return ResponseEntity.noContent().build();
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id:" + id));
+                .orElseThrow(() -> new ProductoNotFoundException(id));
     }
 
-    //@PostMapping("/{id}/")
-    
+    @PostMapping("/{id}/usuarios")
+    public List<Usuario> getProductUsuarios(@PathVariable Long id){
+        Producto producto = productoRepositorio.findById(id)
+                .orElseThrow(() -> new ProductoNotFoundException(id));
+        return producto.getUsuarios();
+    }
 }

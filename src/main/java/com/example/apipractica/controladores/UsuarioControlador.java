@@ -1,9 +1,13 @@
 package com.example.apipractica.controladores;
 
 import com.example.apipractica.dto.UsuarioDTO;
+import com.example.apipractica.error.ProductoExistenteException;
+import com.example.apipractica.error.UsuarioExistenteException;
 import com.example.apipractica.error.UsuarioNotFoundException;
+import com.example.apipractica.modelo.Producto;
 import com.example.apipractica.modelo.Usuario;
 import com.example.apipractica.repositorios.UsuarioRepositorio;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +38,13 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/")
-    public Usuario createUsuario(@Valid @RequestBody Usuario usuario){
-        return usuarioRepositorio.save(usuario);
+    public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario){
+        if (usuarioRepositorio.existsByEmail(usuario.getEmail())) {
+            throw new UsuarioExistenteException();
+        }
+
+        Usuario nuevoUsuario = usuarioRepositorio.save(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @PutMapping("/{id}")
@@ -57,5 +66,12 @@ public class UsuarioControlador {
                     return ResponseEntity.noContent().build();
                 })
                 .orElseThrow(() -> new UsuarioNotFoundException(id));
+    }
+
+    @PostMapping("/{id}/productos")
+    public List<Producto> getProductUsuarios(@PathVariable Long id){
+        Usuario usuario = usuarioRepositorio.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
+        return usuario.getProductos();
     }
 }
